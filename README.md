@@ -1,2 +1,64 @@
 # Arduino_code
 This repo contains my arduino projects codes
+// Define sensor and buzzer pins
+const int ultrasonicTrigPin = 2; // Ultrasonic sensor trigger pin
+const int ultrasonicEchoPin = 3; // Ultrasonic sensor echo pin
+const int waterSensorPin = A0;   // Water sensor analog pin
+const int buzzer1Pin = 4;        // Buzzer 1 pin
+const int buzzer2Pin = 5;        // Buzzer 2 pin
+
+// Variables to hold sensor readings
+int ultrasonicDistance = 0;
+int waterSensorValue = 0;
+
+void setup() {
+  // Initialize Serial communication for debugging
+  Serial.begin(9600);
+
+  // Set sensor and buzzer pins as input or output
+  pinMode(ultrasonicTrigPin, OUTPUT);
+  pinMode(ultrasonicEchoPin, INPUT);
+  pinMode(waterSensorPin, INPUT);
+  pinMode(buzzer1Pin, OUTPUT);
+  pinMode(buzzer2Pin, OUTPUT);
+}
+
+void loop() {
+  // Read ultrasonic sensor
+  ultrasonicDistance = getUltrasonicDistance();
+
+  // Read water sensor
+  waterSensorValue = analogRead(waterSensorPin);
+
+  // Check conditions and activate buzzers accordingly
+  if (ultrasonicDistance < 30) { // Change this value according to your requirement
+    tone(buzzer1Pin, 1000); // Play a tone on buzzer 1
+    noTone(buzzer2Pin);    // Stop any sound on buzzer 2
+  } else {
+    noTone(buzzer1Pin);    // Stop any sound on buzzer 1
+
+    if (waterSensorValue > 100) { // Change this value according to your requirement
+      tone(buzzer2Pin, 5000); // Play a different tone on buzzer 2
+    } else {
+      noTone(buzzer2Pin);    // Stop any sound on buzzer 2
+    }
+  }
+
+  // Print sensor readings for debugging
+  Serial.print("Ultrasonic Distance: ");
+  Serial.print(ultrasonicDistance);
+  Serial.print("cm, Water Sensor Value: ");
+  Serial.println(waterSensorValue);
+
+  //delay(100); // Add a short delay to avoid rapid readings and for buzzer sound
+}
+
+int getUltrasonicDistance() {
+  digitalWrite(ultrasonicTrigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(ultrasonicTrigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(ultrasonicTrigPin, LOW);
+
+  return pulseIn(ultrasonicEchoPin, HIGH) / 58; // Convert echo time to distance in cm
+}
