@@ -8,6 +8,7 @@ const int buzzer1Pin = 4;        // Buzzer 1 pin
 const int buzzer2Pin = 5;        // Buzzer 2 pin
 
 // Variables to hold sensor readings
+# git modification
 int ultrasonicDistance = 0;
 int waterSensorValue = 0;
 
